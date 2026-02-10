@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import TaskEntry from './pages/TaskEntry';
+import TasksTable from './components/TaskTable';
 
 
 
@@ -17,6 +18,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/task-entry" element={<TaskEntry />} />
+        <Route path="taskstable" element={<TasksTable />} />
+
       </Routes>
     </BrowserRouter>
   

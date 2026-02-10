@@ -19,8 +19,16 @@ export default function Dashboard() {
 
   return (
     <div className="container-fluid mt-4">
-      <h3 className="fw-bold mb-3">Task Manager</h3>
-
+      <h3 className="fw-bold mb-3">Task Manager</h3>{" "}
+      <button
+        className="btn btn-danger"
+        onClick={() => {
+          localStorage.removeItem("token");
+          navigate("/login");
+        }}
+      >
+        Logout
+      </button>
       {/* filter card */}
       <div className="card shadow-sm mb-3">
         <div className="card-body">
@@ -47,7 +55,7 @@ export default function Dashboard() {
                 <option value="EnrollmentDate">Date</option>
               </select>
             </div>
-              
+
             <div className="col-md-3">
               <select
                 className="form-select"
@@ -72,6 +80,12 @@ export default function Dashboard() {
               >
                 Add Task
               </button>
+              <button
+                className="btn btn-info"
+                onClick={() => navigate("/taskstable")}
+              >
+                View Tasks
+              </button>
 
               <button
                 className="btn btn-secondary"
@@ -84,16 +98,6 @@ export default function Dashboard() {
               >
                 Reset
               </button>
-
-              <button
-                className="btn btn-danger"
-                onClick={() => {
-                  localStorage.removeItem("token");
-                  navigate("/login");
-                }}>
-                  Logout
-              </button>
-
               <button
                 className="btn btn-success"
                 onClick={() => {
@@ -101,13 +105,12 @@ export default function Dashboard() {
                   setShowForm(true);
                 }}
               >
-                Add
+                Add Data
               </button>
             </div>
           </div>
         </div>
       </div>
-
       {/* TABLE */}
       <StudentTable
         search={search}
@@ -117,12 +120,11 @@ export default function Dashboard() {
         setPage={setPage}
         reload={reload}
         onEdit={(s) => {
-        setSelectedStudent(s);
-        setShowForm(true);
+          setSelectedStudent(s);
+          setShowForm(true);
         }}
         refresh={refresh}
       />
-
       {/* MODAL FORM */}
       <StudentForm
         show={showForm}

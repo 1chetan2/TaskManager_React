@@ -21,10 +21,10 @@ export default function TaskEntry() {
         taskName: form.taskName,
         task: form.task,
         hours: Number(form.hours),
-        statusValue: form.statusValue
+       statusValue: form.statusValue
       };
 
-      await axios.post("http://localhost:5207/api/TaskItem", payload);
+      await axios.post("https://localhost:7119/api/TaskItem", payload);
       alert("Task saved successfully");
     } catch (err) {
       console.log(err);
@@ -34,8 +34,12 @@ export default function TaskEntry() {
 
   return (
     <div style={styles.page}>
+      
       <div style={styles.card}>
         <h2 style={styles.title}>Daily Task Entry</h2>
+        <button style={styles.backButton} onClick={() => window.history.back()}>
+        ← Back
+      </button>
 
         <label style={styles.label}>Date</label>
         <input style={styles.input} type="date" name="date" onChange={handleChange} />
@@ -129,3 +133,7 @@ const styles = {
     cursor: "pointer"
   }
 };
+
+
+
+
