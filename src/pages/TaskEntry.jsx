@@ -10,8 +10,34 @@ export default function TaskEntry() {
     statusValue: "Pending"
   });
 
+  const [file, setFile] = useState(null);
+  const [storageType, setStorageType] = useState("internal");
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  // file store on local storage
+  const saveToLocalStorage = (file) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      localStorage.setItem("taskFile", reader.result);
+      alert("File stored in localStorage");
+    };
+    reader.readAsDataURL(file);
+  };
+
+  //file store on google drive
+  const uploadToServer = async (file) => {
+    const data = new FormData();
+    data.append("file", file);
+
+    await axios.post("http://localhost:5207/api/FileUpload/upload", data);
+    alert("File uploaded");
   };
 
   const saveData = async () => {
@@ -21,10 +47,17 @@ export default function TaskEntry() {
         taskName: form.taskName,
         task: form.task,
         hours: Number(form.hours),
-       statusValue: form.statusValue
+        statusValue: form.statusValue
       };
 
-      await axios.post("https://localhost:7119/api/TaskItem", payload);
+      await axios.post("http://localhost:5207/api/TaskItem", payload);
+
+      if (file) {
+        storageType === "internal"
+          ? saveToLocalStorage(file)
+          : await uploadToServer(file);
+      }
+
       alert("Task saved successfully");
     } catch (err) {
       console.log(err);
@@ -34,47 +67,52 @@ export default function TaskEntry() {
 
   return (
     <div style={styles.page}>
-      
       <div style={styles.card}>
-        <h2 style={styles.title}>Daily Task Entry</h2>
-        <button style={styles.backButton} onClick={() => window.history.back()}>
-        ← Back
-      </button>
+        <h2 style={styles.title}>Task Entry</h2>
 
-        <label style={styles.label}>Date</label>
-        <input style={styles.input} type="date" name="date" onChange={handleChange} />
+        <div style={styles.field}>
+          <label style={styles.label}>Date</label>
+          <input style={styles.input} type="date" name="date" onChange={handleChange} />
+        </div>
 
-        <label style={styles.label}>Task Name</label>
-        <input
-          style={styles.input}
-          type="text"
-          name="taskName"
-          placeholder="Task Name"
-          onChange={handleChange}
-        />
+        <div style={styles.field}>
+          <label style={styles.label}>Task Name</label>
+          <input style={styles.input} name="taskName" onChange={handleChange} />
+        </div>
 
-        <label style={styles.label}>Task Description</label>
-        <textarea
-          style={styles.textarea}
-          name="task"
-          placeholder="Describe your task"
-          onChange={handleChange}
-        />
+        <div style={styles.field}>
+          <label style={styles.label}>Description</label>
+          <textarea style={styles.textarea} name="task" onChange={handleChange} />
+        </div>
 
-        <label style={styles.label}>Hours</label>
-        <input
-          style={styles.input}
-          type="number"
-          name="hours"
-          placeholder="Hours worked"
-          onChange={handleChange}
-        />
+        <div style={styles.field}>
+          <label style={styles.label}>Hours</label>
+          <input style={styles.input} type="number" name="hours" onChange={handleChange} />
+        </div>
 
-        <label style={styles.label}>Status</label>
-        <select style={styles.input} name="statusValue" onChange={handleChange}>
-          <option value="Pending">Pending</option>
-          <option value="Completed">Completed</option>
-        </select>
+        <div style={styles.field}>
+          <label style={styles.label}>Status</label>
+          <select style={styles.input} name="statusValue" onChange={handleChange}>
+            <option value="Pending">Pending</option>
+            <option value="Completed">Completed</option>
+          </select>
+        </div>
+
+        <div style={styles.field}>
+          <label style={styles.label}>Upload File</label>
+          <input style={styles.input} type="file" onChange={handleFileChange} />
+        </div>
+
+        <div style={styles.field}>
+          <label style={styles.label}>Storage Type</label>
+          <select
+            style={styles.input}
+            onChange={(e) => setStorageType(e.target.value)}
+          >
+            <option value="internal">Internal (localStorage)</option>
+            <option value="external">External (Google Drive)</option>
+          </select>
+        </div>
 
         <button style={styles.button} onClick={saveData}>
           Save Task
@@ -90,50 +128,55 @@ const styles = {
     justifyContent: "center",
     alignItems: "center",
     height: "100vh",
-    background: "#f4f6f9"
+    backgroundColor: "#eef2f7",
+    fontFamily: "Segoe UI, sans-serif"
   },
   card: {
-    width: "380px",
-    padding: "25px",
+    width: "420px",
+    padding: "30px",
+    background: "#ffffff",
     borderRadius: "12px",
-    background: "#fff",
-    boxShadow: "0 8px 20px rgba(0,0,0,0.1)",
+    boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
     display: "flex",
     flexDirection: "column",
-    gap: "10px"
+    gap: "14px"
   },
   title: {
     textAlign: "center",
     marginBottom: "10px",
-    color: "#333"
+    color: "#2c3e50"
+  },
+  field: {
+    display: "flex",
+    flexDirection: "column"
   },
   label: {
+    marginBottom: "4px",
     fontSize: "14px",
-    fontWeight: "500"
+    fontWeight: "600",
+    color: "#555"
   },
   input: {
-    padding: "8px",
+    padding: "10px",
     borderRadius: "6px",
-    border: "1px solid #ccc"
+    border: "1px solid #dcdcdc",
+    fontSize: "14px"
   },
   textarea: {
-    padding: "8px",
+    padding: "10px",
     borderRadius: "6px",
-    border: "1px solid #ccc",
-    minHeight: "70px"
+    border: "1px solid #dcdcdc",
+    minHeight: "80px",
+    fontSize: "14px"
   },
   button: {
-    marginTop: "12px",
-    padding: "10px",
+    marginTop: "10px",
+    padding: "12px",
+    backgroundColor: "#2563eb",
+    color: "white",
     border: "none",
     borderRadius: "6px",
-    background: "#0d6efd",
-    color: "#fff",
-    fontWeight: "bold",
+    fontWeight: "600",
     cursor: "pointer"
   }
 };
-
-
-
-

@@ -10,23 +10,20 @@ export default function TaskTable() {
   }, []);
 
   const loadTasks = async () => {
-  try {
-    const res = await axios.get("https://localhost:7119/api/TaskItem");
-    console.log("DATA:", res.data);
-    setTasks(res.data);
-  } catch (err) {
-    console.log("ERROR:", err);
-  }
-};
-
+    try {
+      const res = await axios.get("http://localhost:5207/api/TaskItem");
+      console.log("DATA:", res.data);
+      setTasks(res.data);
+    } catch (err) {
+      console.log("ERROR:", err);
+    }
+  };
 
   return (
     <div className="card shadow-sm">
       <div className="card-body">
         <h5 className="mb-3">Task List </h5>
-        <button onClick={() => window.history.back()}>
-        ← Back
-      </button>
+        <button onClick={() => window.history.back()}>← Back</button>
 
         <table className="table table-bordered">
           <thead className="table-light">
@@ -45,10 +42,18 @@ export default function TaskTable() {
                 <td>{t.taskName}</td>
                 <td>{t.task}</td>
                 <td>{t.hours}</td>
-                <td>{t.statusValue}</td>
+                <td className={t.statusValue === "Completed" ? "text-success" : "text-warning"}>{t.statusValue}</td>
               </tr>
             ))}
           </tbody>
+          <tr><button
+                    onClick={() => {
+                      const file = localStorage.getItem("taskFile");
+                      if (file) window.open(file);
+                    }}
+                  >
+                    View Stored File
+                  </button></tr>
         </table>
       </div>
     </div>
