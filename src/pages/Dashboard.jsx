@@ -68,12 +68,7 @@ export default function Dashboard() {
             </div>
 
             <div className="col-md-3 d-flex gap-2">
-              {/* <button
-                className="btn btn-primary"
-                onClick={() => setPage(1)}
-              >
-                Apply
-              </button> */}
+             
               <button
                 className="btn btn-primary"
                 onClick={() => navigate("/task-entry")}
